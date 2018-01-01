@@ -1,0 +1,5 @@
+Keras LSTM RNN test generator
+https://github.com/ChunML/text-generator
+
+Bible Versions and Cross-Reference Databases: mysql, sqlite, xml, csv, json
+https://github.com/scrollmapper/bible_databases
