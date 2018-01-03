@@ -3,6 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 import csv
+
+# GPU usage settings
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.8
+set_session(tf.Session(config=config))
+
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM, SimpleRNN
@@ -46,9 +54,11 @@ model.add(TimeDistributed(Dense(VOCAB_SIZE)))
 model.add(Activation('softmax'))
 model.compile(loss = "categorical_crossentropy", optimizer = "rmsprop")
 
+'''
 # Generate some sample before training to know how bad it is!
 print('[*] Generating sample...')
 generate_text(model, args['generate_length'], VOCAB_SIZE, ix_to_char)
+'''
 
 if not WEIGHTS == '':
   model.load_weights(WEIGHTS)
@@ -62,11 +72,17 @@ if args['mode'] == 'train' or WEIGHTS == '':
     print('\n\n[*] Epoch: {}\n'.format(nb_epoch))
     model.fit(X, y, batch_size = BATCH_SIZE, verbose = 1, nb_epoch = 1)
     nb_epoch += 1
-    generate_text(model, GENERATE_LENGTH, VOCAB_SIZE, ix_to_char)
+    # Generate verses every 5 epochs
+    if nb_epoch % 5 == 0:
+      print('\n\n' + '#' * 80 + '\nRandom generation 1:')
+      generate_text(model, GENERATE_LENGTH, VOCAB_SIZE, ix_to_char)
+      print('\n\n' + '#' * 80 + '\nRandom generation 2:')
+      generate_text(model, GENERATE_LENGTH, VOCAB_SIZE, ix_to_char)
+      print('\n\n' + '#' * 80 + '\n')
     # Save every SAVE_INTERVAL epochs
     if nb_epoch % SAVE_INTERVAL == 0:
       print('\n[*] Saving model...')
-      model.save_weights('./model_checkpoints/checkpoint_layer_{}_hidden_{}_epoch_{}.hdf5'.format(LAYER_NUM, HIDDEN_DIM, nb_epoch))
+      model.save('./model_checkpoints/checkpoint_layer_{}_hidden_{}_epoch_{}.hdf5'.format(LAYER_NUM, HIDDEN_DIM, nb_epoch))
       print('[+] Model saved: ./model_checkpoints/checkpoint_layer_{}_hidden_{}_epoch_{}.hdf5'.format(LAYER_NUM, HIDDEN_DIM, nb_epoch))
 
 # Else, loading the trained weights and performing generation only
