@@ -13,10 +13,11 @@ def generate_text(model, length, vocab_size, ix_to_char):
 		print(ix_to_char[ix[-1]], end = "")
 		ix = np.argmax(model.predict(X[:, :i + 1, :])[0], 1)
 		y_char.append(ix_to_char[ix[-1]])
-	return ('').join(y_char)
+	return ('').join([str(c) for c in y_char])
 
 # method for preparing the training data
 def load_data(data_dir, seq_length):
+	####data = open(data_dir, 'r', encoding = 'utf-8').read().encode('ascii', 'ignore')
 	data = open(data_dir, 'r').read()
 	chars = list(set(data))
 	VOCAB_SIZE = len(chars)

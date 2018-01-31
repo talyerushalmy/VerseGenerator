@@ -3,3 +3,6 @@ https://github.com/ChunML/text-generator
 
 Bible Versions and Cross-Reference Databases: mysql, sqlite, xml, csv, json
 https://github.com/scrollmapper/bible_databases
+
+Archived Lord Of The Rings - got txt versions of the books there
+https://archive.org/details/TheLordOfTheRing1TheFellowshipOfTheRing

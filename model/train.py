@@ -20,16 +20,17 @@ from RNN_utils import *
 
 # Parsing arguments for Network definition
 ap = argparse.ArgumentParser()
-ap.add_argument('-data_dir', default = './data/t_ylt.csv')
-ap.add_argument('-batch_size', type = int, default = 50)
+ap.add_argument('-data_dir', default = './data/data.txt')
+ap.add_argument('-batch_size', type = int, default = 300)
 ap.add_argument('-layer_num', type = int, default = 2)
 ap.add_argument('-seq_length', type = int, default = 50)
 ap.add_argument('-hidden_dim', type = int, default = 500)
 ap.add_argument('-generate_length', type = int, default = 500)
-ap.add_argument('-nb_epoch', type = int, default=20)
+ap.add_argument('-nb_epoch', type = int, default = 20)
 ap.add_argument('-mode', default = 'train')
 ap.add_argument('-weights', default = '')
-ap.add_argument('-save_interval', type = int, default = 10)
+ap.add_argument('-sample_interval', type = int, default = 5)
+ap.add_argument('-save_interval', type = int, default = 5)
 args = vars(ap.parse_args())
 
 DATA_DIR = args['data_dir']
@@ -37,6 +38,7 @@ BATCH_SIZE = args['batch_size']
 HIDDEN_DIM = args['hidden_dim']
 SEQ_LENGTH = args['seq_length']
 WEIGHTS = args['weights']
+SAMPLE_INTERVAL = args['sample_interval']
 SAVE_INTERVAL = args['save_interval']
 
 GENERATE_LENGTH = args['generate_length']
@@ -72,8 +74,8 @@ if args['mode'] == 'train' or WEIGHTS == '':
     print('\n\n[*] Epoch: {}\n'.format(nb_epoch))
     model.fit(X, y, batch_size = BATCH_SIZE, verbose = 1, nb_epoch = 1)
     nb_epoch += 1
-    # Generate verses every 5 epochs
-    if nb_epoch % 5 == 0:
+    # Generate 2 samples every SAMPLE_INTERVAL epochs
+    if nb_epoch % SAMPLE_INTERVAL == 0:
       print('\n\n' + '#' * 80 + '\nRandom generation 1:')
       generate_text(model, GENERATE_LENGTH, VOCAB_SIZE, ix_to_char)
       print('\n\n' + '#' * 80 + '\nRandom generation 2:')
