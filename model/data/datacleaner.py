@@ -1,7 +1,7 @@
 import re
 
 # read raw_data.txt and ignore non-ascii characters
-f = open('raw_data.txt', 'r+')
+f = open('raw_data.txt', 'r')
 raw_data = f.read().decode('utf-8').encode('ascii', 'ignore')
 f.close()
 
@@ -13,21 +13,37 @@ new_data = new_data.replace('\r', '\n')
 new_data = re.sub(r'\n\s*', '\n', new_data)
 new_data = ' '.join(new_data.split(' '))
 
+# clear verse numbers
+new_data = re.sub(r'\\[0-9]+:[0-9]+\\', '', new_data)
+
 # data that will be written to the output file (data.txt)
 long_line = ''
 
 # remove leading and trailing apostrophes
 for line in new_data.split('\n'):
+	line = ''.join([c for c in line if c.isalnum() or c in ' ,\n."\':;'])
+	line = line.strip()
 	if line.startswith('"'):
-		line = line[1::]
+		line = line[1:]
 	if line.endswith('"'):
-		line = line[::1]
+		line = line[:-1]
 	long_line += '%s ' % line
 
 # clear consecutive spaces
 long_line = re.sub(' +', ' ', long_line)
 
+# break lines at dots
+output_data = long_line.replace('."', '\n\n')
+output_data = output_data.replace('.', '.\n')
+output_data = output_data.replace('\n\n', '."\n')
+
+# remove leading spaces
+output_data = '\n'.join([line.strip() for line in output_data.split('\n')])
+
+# change all characters to lower case
+output_data = output_data.lower()
+
 # write result to data.txt
 f_out = open('data.txt', 'w+')
-f_out.write(long_line)
+f_out.write(output_data)
 f_out.close()
